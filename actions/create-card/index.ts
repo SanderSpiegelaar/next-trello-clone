@@ -8,6 +8,8 @@ import { db } from "@/lib/db"
 
 import { InputType, ReturnType } from "./types"
 import { CreateCard } from "./schema"
+import { createAuditLog } from "@/lib/create-audit-log"
+import { ACTION, ENTITY_TYPE } from "@prisma/client"
 
 const handler = async (data: InputType): Promise<ReturnType> => {
 	const { userId, orgId } = auth()
@@ -42,6 +44,13 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 				listId,
 				order: newOrder,
 			},
+		})
+
+		await createAuditLog({
+			entityId: card.id,
+			entityTitle: card.title,
+			entityType: ENTITY_TYPE.CARD,
+			action: ACTION.CREATE,
 		})
 	} catch (error) {
 		return { error: "Failed to create list" }

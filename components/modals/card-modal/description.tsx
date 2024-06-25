@@ -42,14 +42,17 @@ export const Description = ({ data }: DescriptionProps) => {
 	}
 
 	const { execute, fieldErrors } = useAction(updateCard, {
-		onSuccess: (data) => {
+		onSuccess: data => {
 			queryClient.invalidateQueries({
 				queryKey: ["card", data.id],
+			})
+			queryClient.invalidateQueries({
+				queryKey: ["card-logs", data.id],
 			})
 			toast.success(`Card "${data.title}" updated`)
 			disableEditing()
 		},
-		onError: (error) => {
+		onError: error => {
 			toast.error(error)
 		},
 	})
@@ -72,13 +75,14 @@ export const Description = ({ data }: DescriptionProps) => {
 		<div className="flex items-start gap-x-3 w-full">
 			<AlignLeft className="h-5 w-5 mt-0.5 text-neutral-700" />
 			<div className="w-full">
-				<span className="font-semibold text-neutral-700 mb-2">Description</span>
+				<span className="block font-semibold text-neutral-700 mb-2">
+					Description
+				</span>
 				{isEditing ? (
 					<form
 						ref={formRef}
 						action={onSubmit}
-						className="space-y-2"
-					>
+						className="space-y-2">
 						<FormTextarea
 							id="description"
 							className="w-full mt-2"
@@ -93,8 +97,7 @@ export const Description = ({ data }: DescriptionProps) => {
 								type="button"
 								onClick={disableEditing}
 								size="sm"
-								variant="ghost"
-							>
+								variant="ghost">
 								Cancel
 							</Button>
 						</div>
@@ -103,8 +106,7 @@ export const Description = ({ data }: DescriptionProps) => {
 					<div
 						onClick={enableEditing}
 						role="button"
-						className="min-h-[78px] bg-neutral-200 text-sm font-medium py-3 px-3.5 rounded-md"
-					>
+						className="min-h-[78px] bg-neutral-200 text-sm font-medium py-3 px-3.5 rounded-md">
 						{data.description || "Add a more detailed description"}
 					</div>
 				)}
